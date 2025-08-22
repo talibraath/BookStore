@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # Manually Added
     'accounts',
+    'drf_yasg',
 ]
 
 
