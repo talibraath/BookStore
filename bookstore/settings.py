@@ -41,10 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Manually Added
+    'rest_framework',
     'accounts',
     'drf_yasg',
     'rest_framework_simplejwt.token_blacklist',
-
+    'profiles',
 ]
 
 
