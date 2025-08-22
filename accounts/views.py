@@ -128,7 +128,7 @@ class LogoutView(generics.GenericAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class passwordResetView(generics.GenericAPIView):
+class PasswordResetView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ResetPasswordSerializer
 
@@ -189,7 +189,7 @@ class PasswordResetConfirmView(generics.GenericAPIView):
             )
         )}
     )
-    
+
     def post(self, request):
         email = request.data.get("email")
         otp = request.data.get("otp")
@@ -207,3 +207,5 @@ class PasswordResetConfirmView(generics.GenericAPIView):
             return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "Invalid email or OTP"}, status=status.HTTP_404_NOT_FOUND)
+        
+    
