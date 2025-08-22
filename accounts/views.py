@@ -7,6 +7,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import LoginSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+import random
+from django.core.mail import send_mail
+from .serializers import ResetPasswordSerializer
+from django.conf import settings
+
 
 User = get_user_model()
 
@@ -121,3 +126,84 @@ class LogoutView(generics.GenericAPIView):
             return Response("Logout Successfully",status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class passwordResetView(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordSerializer
+
+    @swagger_auto_schema(
+        operation_description="Request password reset OTP",
+        tags=["Auth"], 
+        request_body=ResetPasswordSerializer,
+        responses={200: openapi.Response(
+            description="OTP sent to email",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='Success message'),
+                }
+            )
+        )}
+    )
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+            otp = str(random.randint(100000, 999999))  
+            user.otp = otp
+            user.save()
+
+            send_mail(
+                subject="Password Reset OTP",
+                message=f"Your OTP for password reset is: {otp}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            return Response({"message": "OTP sent to your email"}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+class PasswordResetConfirmView(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordSerializer
+
+    @swagger_auto_schema(
+        operation_description="Confirm password reset with OTP",
+        tags=["Auth"], 
+        request_body=ResetPasswordSerializer,
+        responses={200: openapi.Response(
+            description="Password reset successfully",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='Success message'),
+                }
+            )
+        )}
+    )
+    
+    def post(self, request):
+        email = request.data.get("email")
+        otp = request.data.get("otp")
+        new_password = request.data.get("new_password")
+
+        if not email or not otp or not new_password:
+            return Response({"error": "Email, OTP, and new password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email, otp=otp)
+            user.set_password(new_password)
+            user.otp = None  
+            user.save()
+
+            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "Invalid email or OTP"}, status=status.HTTP_404_NOT_FOUND)
