@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import SAFE_METHODS, BasePermission
-
+from rest_framework.pagination  import PageNumberPagination
 # Create your views here.
 
 class IsAdmin(BasePermission):
@@ -23,6 +23,7 @@ class PlaceOrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
     allowd_methods = ['get', 'post','update', 'partial_update']
 
     def get_queryset(self):
