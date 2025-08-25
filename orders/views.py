@@ -19,8 +19,6 @@ class IsAdmin(BasePermission):
         return False
        
 
-
-
 class PlaceOrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -29,7 +27,7 @@ class PlaceOrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        
+
         if user.is_anonymous:
             return Order.objects.none()
         
