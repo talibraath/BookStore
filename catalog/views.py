@@ -17,20 +17,20 @@ class IsAdminOrReadOnly(BasePermission):
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
 
 
 class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
