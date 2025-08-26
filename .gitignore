@@ -20,6 +20,3 @@ __pycache__/
 .idea/
 .vscode/
 # Ignore Python virtual environment     
-
-__pycache__/
-*.pyc

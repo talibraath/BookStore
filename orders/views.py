@@ -97,8 +97,3 @@ class PlaceOrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['get'], url_path='all-orders', permission_classes=[IsAdmin])
-    def all_orders(self, request):
-        orders = Order.objects.all()
-        serializer = self.get_serializer(orders, many=True)
-        return Response(serializer.data)
