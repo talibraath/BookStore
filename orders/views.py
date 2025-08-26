@@ -1,31 +1,35 @@
-from django.shortcuts import render
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Order
 from .serializers import OrderSerializer
-from django.core.mail import send_mail
-from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import SAFE_METHODS, BasePermission
+from rest_framework.permissions import BasePermission
 from rest_framework.pagination  import PageNumberPagination
-# Create your views here.
+from .signals import order_confirmed
+from rest_framework import status
 
+# Create your views here.
 class IsAdmin(BasePermission):
+
     def has_permission(self, request, view):
+
+        if request.user.is_authenticated and request.method in ['GET', 'POST'] and request.user.role in 'customer':
+            return True            
+        
         if request.user.is_authenticated and request.user.role == 'admin':
             return True
         
         return False
        
 
-class PlaceOrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdmin]
     pagination_class = PageNumberPagination
-    allowd_methods = ['get', 'post','update', 'partial_update']
-
+    http_method_names = ['get', 'post', 'patch']    
+    
     def get_queryset(self):
         user = self.request.user
 
@@ -33,46 +37,17 @@ class PlaceOrderViewSet(viewsets.ModelViewSet):
             return Order.objects.none()
         
         if user.role == 'admin':
-            return Order.objects.all()
+            return Order.objects.all().order_by('-created_at')
         
-        return Order.objects.filter(user=user)
+        return Order.objects.filter(user=user).order_by('-created_at')
     
     def perform_create(self, serializer):
         order = serializer.save()
-
-        items_details = "\n".join([
-            f"- {item.book.title} x {item.quantity} @ ${item.price}"
-            for item in order.items.all()
-        ])
-
-        subject = f"Order Confirmation - Order #{order.id}"
-        message = f"""
-    Hello {self.request.user.username},
-
-    Thank you for your order! Your order #{order.id} has been successfully placed on {order.created_at.strftime('%Y-%m-%d %H:%M:%S')}.
-
-    Order Details:
-    {items_details}
-
-    Total Amount: ${order.total_amount}
-
-    We will notify you once your order is shipped.
-
-    Best regards,
-    Your Bookstore Team
-    """
-
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[self.request.user.email, 'f219070@cfd.nu.edu.pk'],
-            fail_silently=False
-        )
-
-    @action(detail=True, methods=['patch'], url_path='status',permission_classes=[IsAdmin])
+        user = self.request.user
+        order_confirmed.send(sender=Order, order=order, user=user)
+ 
+    @action(detail=True, methods=['patch'], url_path='status')
     def update_status(self, request, pk=None):
-        
         order = self.get_object()
         new_status = request.data.get('status')
 
@@ -81,19 +56,6 @@ class PlaceOrderViewSet(viewsets.ModelViewSet):
 
         order.status = new_status
         order.save(update_fields=['status'])
-        send_mail(
-            subject=f"Order #{order.id} Status Updated",
-            message=f"Hello {order.user.username},\n\nYour order #{order.id} status has been updated to '{new_status}'.\n\nBest regards,\nYour Bookstore Team",
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[order.user.email],
-            fail_silently=False,
-        )
-        return Response({"Status updated successfully."})
 
-    @action(detail=False, methods=['get'], url_path='my-orders', permission_classes=[IsAuthenticated])
-    def my_orders(self, request):
-        user = request.user
-        orders = Order.objects.filter(user=user)
-        serializer = self.get_serializer(orders, many=True)
-        return Response(serializer.data)
+        return Response({"Status updated successfully."})
     

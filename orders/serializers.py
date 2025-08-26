@@ -20,6 +20,21 @@ class OrderSerializer(ModelSerializer):
         model = Order
         fields = ['id', 'user', 'created_at', 'status', 'total_amount', 'items']
         read_only_fields = ['user', 'created_at', 'status', 'total_amount']
+    
+    def validate(self, data):
+        items_data = data.get('items', [])
+    
+        if not items_data:
+            raise serializers.ValidationError("Order must contain at least one item.")
+        
+        for item_data in items_data:
+            book = item_data['book']   
+            quantity = item_data['quantity']
+
+            if book.stock < quantity:
+                raise serializers.ValidationError(f"This book does not have enough stock.")
+            
+        return data
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
