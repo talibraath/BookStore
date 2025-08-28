@@ -35,7 +35,7 @@ class RegisterView(generics.CreateAPIView):
                     'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email'),
                     'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
                     'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
-                    'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role'),
+                    # 'role': openapi.Schema(type=openapi.TYPE_STRING, description='User role'),
                 }
             )
         )}

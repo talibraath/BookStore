@@ -27,7 +27,12 @@ SECRET_KEY = 'django-insecure-x8+at-=&$!f5pwkqum9s405u70i44!0_o@%)8i9x0+ds&7=w*y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'http://localhost:8080/',
+    'http://127.0.0.1:8080/',
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -48,6 +53,9 @@ INSTALLED_APPS = [
     'profiles',
     'catalog',
     'orders',
+
+    "corsheaders",
+
 ]
 
 
@@ -85,6 +93,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+
 ]
 
 ROOT_URLCONF = 'bookstore.urls'
@@ -189,6 +200,8 @@ EMAIL_PORT = config("EMAIL_PORT", cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
+CORS_ALLOW_ALL_ORIGINS = True  # For testing (not safe for production)
 
 
 
