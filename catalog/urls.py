@@ -7,6 +7,4 @@ router.register("books", BookViewSet, basename="books")
 router.register("authors", AuthorViewSet, basename="authors")
 router.register("categories", CategoryViewSet, basename="categories")
 
-urlpatterns = [
-    
-] + router.urls
+urlpatterns = router.urls
