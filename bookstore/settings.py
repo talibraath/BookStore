@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'profiles',
     'catalog',
     'orders',
+    'recommendations',
 
     "corsheaders",
 
@@ -95,6 +96,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+
+    # Custom Middleware
+    'orders.middleware.ip_blocking.IPBlockerMiddleware',
 
 ]
 
@@ -200,6 +204,9 @@ EMAIL_PORT = config("EMAIL_PORT", cast=int)
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
+GROQ_API_KEY= config("GROQ_API_KEY")
+AI_MODEL= config("AI_MODEL")
 
 CORS_ALLOW_ALL_ORIGINS = True  # For testing (not safe for production)
 
