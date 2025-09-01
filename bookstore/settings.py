@@ -97,6 +97,9 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
 
+    # Custom Middleware
+    'orders.middleware.ip_blocking.IPBlockerMiddleware',
+
 ]
 
 ROOT_URLCONF = 'bookstore.urls'
