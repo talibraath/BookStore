@@ -6,10 +6,11 @@ from catalog.models import Book
 
 class OrderItemSerializer(ModelSerializer):
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
-
+    book_title = serializers.CharField(source='book.title', read_only=True)
+    book_id = serializers.CharField(source='book.id', read_only=True)
     class Meta:
         model = OrderItem
-        fields = ['id', 'book', 'quantity', 'price']
+        fields = ['id', 'book_title','book_id', 'book','quantity', 'price']
         read_only_fields = ['price'] 
 
 

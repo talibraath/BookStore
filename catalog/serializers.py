@@ -15,9 +15,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.name', read_only=True)
+    author_id = serializers.CharField(source='author.id', read_only=True)
+
+    category_id = serializers.CharField(source='category.id', read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
+
+
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['id', 'title', 'price', 'stock','author_name', 'author_id','category_name','category_id',  'pub_date', 'description']
 
     def validate_price(self, value):
         if value <= 0:
