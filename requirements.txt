@@ -6,5 +6,16 @@ psycopg2-binary
 dj-database-url
 pillow
 requests
+PyJWT
+PyYAML
+python-dateutil
+urllib3
+idna
+certifi
+chardet
+typing_extensions
+rich
 groq
 python-decouple
+# Optional: add drf-spectacular if you need API docs
+# drf-spectacular
