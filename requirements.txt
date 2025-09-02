@@ -17,4 +17,6 @@ typing_extensions
 rich
 groq
 python-decouple
+djangorestframework-simplejwt
+django-cors-headers
 drf-yasg
