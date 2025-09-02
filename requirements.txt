@@ -17,5 +17,4 @@ typing_extensions
 rich
 groq
 python-decouple
-# Optional: add drf-spectacular if you need API docs
-# drf-spectacular
+drf-yasg
