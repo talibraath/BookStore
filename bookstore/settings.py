@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,6 +89,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -101,6 +103,8 @@ MIDDLEWARE = [
     'orders.middleware.ip_blocking.IPBlockerMiddleware',
 
 ]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = 'bookstore.urls'
 
@@ -209,6 +213,9 @@ GROQ_API_KEY= config("GROQ_API_KEY")
 AI_MODEL= config("AI_MODEL")
 
 CORS_ALLOW_ALL_ORIGINS = True  # For testing (not safe for production)
+
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")   
 
 
 
