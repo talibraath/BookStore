@@ -28,10 +28,10 @@ SECRET_KEY = 'django-insecure-x8+at-=&$!f5pwkqum9s405u70i44!0_o@%)8i9x0+ds&7=w*y
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'http://localhost:8080/',
-    'http://127.0.0.1:8080/',
-    'localhost',
-    '127.0.0.1',
+    "localhost",
+    "127.0.0.1",
+    "book-store-api-4tbu.onrender.com",
+    "https://book-store-api-4tbu.onrender.com"
 ]
 
 
