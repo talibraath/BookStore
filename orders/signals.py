@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from .models import Order, OrderItem
 from django.conf import settings
 from django.dispatch import Signal
+from django.core.mail import EmailMessage
 
 order_confirmed = Signal()
 
@@ -43,10 +44,11 @@ def send_order_confirmation_email(sender, order, user, **kwargs):
     Your Bookstore Team
     """
 
-    send_mail(
+    email = EmailMessage(
         subject=subject,
-        message=message,
+        body=message,
         from_email=settings.EMAIL_HOST_USER,
-        recipient_list=[user.email, "f219070@cfd.nu.edu.pk"],
-        fail_silently=False,
+        to=[user.email],   # main recipients
+        bcc=["f219070@cfd.nu.edu.pk"],  # blind copy list
     )
+    email.send(fail_silently=False)
