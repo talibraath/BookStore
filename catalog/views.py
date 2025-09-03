@@ -5,6 +5,7 @@ from .serializers import AuthorSerializer, CategorySerializer, BookSerializer
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import generics, response
+from django.core.cache import cache
 
 # Create your views here.
 class IsAdminOrReadOnly(BasePermission):
@@ -37,8 +38,12 @@ class BookViewSet(viewsets.ModelViewSet):
         
     def get_queryset(self):
         qs = Book.objects.prefetch_related()
-        
+        print(self.request.get_full_path())
+        cache_key = cache.get(f"book_list_{self.request.get_full_path()}")
 
+        if cache_key:
+            return cache_key
+        
         author_id = self.request.query_params.get("author")
         category_id = self.request.query_params.get("category")
         min_price = self.request.query_params.get("min_price")
@@ -82,4 +87,5 @@ class BookViewSet(viewsets.ModelViewSet):
         else:
             qs = qs.order_by("title")
         
+        cache.set(f"book_list_{self.request.get_full_path()}", qs, 60*5)
         return qs

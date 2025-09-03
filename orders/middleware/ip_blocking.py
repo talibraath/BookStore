@@ -24,7 +24,7 @@ class IPBlockerMiddleware:
 
         for net in blocked_networks:
             if ip_address(ip) in ip_network(net):
-                print("Blocked IP:", ip)
+                # print("Blocked IP:", ip)
                 return HttpResponseForbidden("Access denied.")
 
         return self.get_response(request)

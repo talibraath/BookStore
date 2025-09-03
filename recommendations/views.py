@@ -5,6 +5,8 @@ from catalog.models import Book
 from catalog.serializers import BookSerializer
 from .llm import call_groq, summarise_book
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.core.cache import cache
+
 
 MOOD_KEYWORDS = {
     "happy": [
@@ -79,7 +81,6 @@ class MoodRecommendationView(APIView):
         if not candidate_data:
             return Response({"mood": category, "results": [], "message": "No candidates found"})
 
-        # messages = build_prompt(prompt=prompt, mood=category, books=candidate_data, limit=limit)
         picks = call_groq(prompt,mood=category, books=candidate_data,limit=limit)
         
         if not picks:
@@ -102,9 +103,12 @@ class BookSummaryView(APIView):
     permission_classes = [AllowAny]
 
     def get(self,request,id):
-        
+        key = f"book_summary_{id}" 
+        cached_summary = cache.get(key)
+        if cached_summary:
+            return Response(cached_summary)
         book = Book.objects.get(id=id)
         summary = summarise_book(title = book.title ,desc = book.description, )
-        ser = BookSerializer(book)
+        cache.set(key, summary, 60*60)  
         return Response(summary)
         
