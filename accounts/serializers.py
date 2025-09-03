@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model, password_validation
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -21,7 +22,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def validate_password(self, value):
-        password_validation.validate_password(value)
+        try:
+            password_validation.validate_password(value)
+        except ValidationError as e:
+            requirements = [
+                        "Your password must contain at least 8 characters.",
+                        "Your password cannot be a commonly used password.",
+                        "Your password cannot be entirely numeric.",
+                        "Password must contain at least one letter or digit."
+                        ]
+            raise serializers.ValidationError(requirements)
+
         return value
 
 
