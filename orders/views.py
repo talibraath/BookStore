@@ -8,6 +8,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework.pagination  import PageNumberPagination
 from .signals import order_confirmed
 from rest_framework import status
+from django.core.cache import cache
 
 # Create your views here.
 class IsAdmin(BasePermission):
@@ -37,13 +38,34 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Order.objects.none()
         
         if user.role == 'admin':
-            return Order.objects.all().order_by('-created_at')
+            key = "all_orders"
+            cached_orders = cache.get(key)
+
+            if cached_orders:
+                return cached_orders
+            
+            all_orders = Order.objects.all().order_by('-created_at')
+            cache.set(key, all_orders, 60*5)
+
+            return all_orders
         
-        return Order.objects.filter(user=user).order_by('-created_at')
+        key = f"user_order_{user.id}"
+        
+        cached_user_orders = cache.get(key)
+
+        if cached_user_orders:
+
+            return cached_user_orders
+        
+        user_orders =  Order.objects.filter(user=user).order_by('-created_at')
+        cache.set(key, user_orders, 60*5)
+        return user_orders
     
     def perform_create(self, serializer):
         order = serializer.save()
         user = self.request.user
+        cache.delete(f"user_order_{user.id}")
+        cache.delete("all_orders")
         order_confirmed.send(sender=Order, order=order, user=user)
  
     @action(detail=True, methods=['patch'], url_path='status')
@@ -55,6 +77,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         order.status = new_status
+        cache.delete(f"user_order_{order.user.id}")
+        cache.delete("all_orders")
         order.save(update_fields=['status'])
 
         return Response({"Status updated successfully."})
