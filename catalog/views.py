@@ -32,7 +32,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [AllowAny]
     pagination_class = StandardResultsSetPagination
         
     def get_queryset(self):
