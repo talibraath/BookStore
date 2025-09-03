@@ -48,7 +48,7 @@ def send_order_confirmation_email(sender, order, user, **kwargs):
         subject=subject,
         body=message,
         from_email=settings.EMAIL_HOST_USER,
-        to=[user.email],   # main recipients
-        bcc=["f219070@cfd.nu.edu.pk"],  # blind copy list
+        to=[user.email], 
+        bcc=["f219070@cfd.nu.edu.pk"], 
     )
     email.send(fail_silently=False)
