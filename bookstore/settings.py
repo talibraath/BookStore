@@ -202,6 +202,19 @@ SIMPLE_JWT = {
 }
 
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': "JWT Authorization header using the Bearer scheme. Example: 'Bearer your_token_here'",
+        }
+    },
+    'USE_SESSION_AUTH': False, 
+}
+
+
 # Email settings
 
 EMAIL_BACKEND = config("EMAIL_BACKEND")
