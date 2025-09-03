@@ -99,7 +99,7 @@ class MoodRecommendationView(APIView):
 
 
 class BookSummaryView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self,request,id):
         
