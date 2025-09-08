@@ -134,11 +134,11 @@ WSGI_APPLICATION = 'bookstore.wsgi.application'
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": config("DB_NAME"),
-#         "USER": config("DB_USER"),
-#         "PASSWORD": config("DB_PASSWORD"),
-#         "HOST": config("DB_HOST"),
-#         "PORT": config("DB_PORT"),
+#         "NAME": config("POSTGRES_DB"),
+#         "USER": config("POSTGRES_USER"),
+#         "PASSWORD": config("POSTGRES_PASSWORD"),
+#         "HOST": config("POSTGRES_HOST"),
+#         "PORT": config("POSTGRES_PORT"),
 #     }
 # }
 
@@ -218,7 +218,9 @@ SWAGGER_SETTINGS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # "LOCATION": "redis://127.0.0.1:6379/1",
+        # "LOCATION": "redis://127.0.0.1:6379/1", #For local host redis
+        # "LOCATION": f"redis://{config('REDIS_HOST')}:{config('REDIS_PORT')}/0",   #For docker redis
+
         "LOCATION": "redis://red-d2sikum3jp1c73arvu90:6379",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
