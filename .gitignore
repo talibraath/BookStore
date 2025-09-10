@@ -19,4 +19,5 @@ __pycache__/
 # Ignore IDE specific files
 .idea/
 .vscode/
-# Ignore Python virtual environment     
+# Ignore Python virtual environment   
+accounts/management/__pycache__/__init__.cpython-312.pyc  
