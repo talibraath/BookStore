@@ -9,9 +9,9 @@ class Command(BaseCommand):
     help = "Seed the database with Authors, Categories, and Books"
 
     def add_arguments(self, parser):
-        parser.add_argument('--authors', type=int, default=5, help='Number of authors to create')
-        parser.add_argument('--categories', type=int, default=3, help='Number of categories to create')
-        parser.add_argument('--books', type=int, default=20, help='Number of books to create')
+        parser.add_argument('--authors', type=int, default=20, help='Number of authors to create')
+        parser.add_argument('--categories', type=int, default=10, help='Number of categories to create')
+        parser.add_argument('--books', type=int, default=1000, help='Number of books to create')
         parser.add_argument('--flush', action='store_true', help='Delete old data before seeding')
 
     def handle(self, *args, **kwargs):
