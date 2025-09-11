@@ -37,6 +37,9 @@ ALLOWED_HOSTS = [
     "https://bookstoreapis-2i0i1vsv.b4a.run",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://bookstoreapis-2i0i1vsv.b4a.run",
+]
 
 # Application definition
 
@@ -244,6 +247,13 @@ GROQ_API_KEY= config("GROQ_API_KEY")
 AI_MODEL= config("AI_MODEL")
 
 CORS_ALLOW_ALL_ORIGINS = True  # For testing (not safe for production)
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://bookstoreapis-2i0i1vsv.b4a.run",
+    "http://bookstoreapis-2i0i1vsv.b4a.run",
+    "http://localhost:8080", 
+    "http://localhost:8000", 
+]
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")   
