@@ -10,8 +10,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Second apt-get install (duplicated)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libpq-dev gcc dos2unix \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh   # <- redundant (you already did chmod above)
 
 ENTRYPOINT ["/entrypoint.sh"]
 
