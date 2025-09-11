@@ -32,7 +32,9 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "book-store-api-4tbu.onrender.com",
-    "https://book-store-api-4tbu.onrender.com"
+    "https://book-store-api-4tbu.onrender.com",
+    "bookstoreapis-2i0i1vsv.b4a.run",
+    "https://bookstoreapis-2i0i1vsv.b4a.run",
 ]
 
 
